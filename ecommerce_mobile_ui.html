@@ -1,0 +1,933 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+:root {
+  --brand: #1A1A2E;
+  --accent: #E8B86D;
+  --accent2: #C9A55A;
+  --soft: #F7F4EF;
+  --muted: #8B8680;
+  --success: #3B9B6E;
+  --danger: #D84040;
+  --card-bg: #ffffff;
+  --text: #1A1A2E;
+  --subtext: #6B6560;
+  --border: rgba(26,26,46,0.1);
+  --phone-w: 340px;
+  --phone-h: 640px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--soft); }
+
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.wrapper {
+  padding: 1rem 0.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.phone-frame {
+  width: var(--phone-w);
+  height: var(--phone-h);
+  background: var(--card-bg);
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid rgba(26,26,46,0.12);
+  box-shadow: 0 12px 40px rgba(26,26,46,0.12);
+  flex-shrink: 0;
+}
+
+.screen { width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+
+.status-bar {
+  height: 32px;
+  background: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  flex-shrink: 0;
+}
+.status-bar span { color: white; font-size: 11px; font-weight: 500; }
+
+.notch {
+  width: 100px; height: 20px;
+  background: var(--brand);
+  border-radius: 0 0 14px 14px;
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+}
+
+.screen-content { flex: 1; overflow-y: auto; scrollbar-width: none; }
+.screen-content::-webkit-scrollbar { display: none; }
+
+.nav-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 68px;
+  background: white;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px 8px;
+  z-index: 10;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 8px 12px 0;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+.nav-item:hover { background: rgba(232,184,109,0.08); }
+.nav-item svg { width: 20px; height: 20px; }
+.nav-item span { font-size: 10px; color: var(--muted); font-weight: 500; }
+.nav-item.active span { color: var(--accent2); }
+.nav-item.active svg path, .nav-item.active svg rect, .nav-item.active svg circle { stroke: var(--accent2); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500; transition: all 0.18s;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--brand); color: white;
+  border-radius: 14px; padding: 13px 20px;
+  font-size: 14px; width: 100%;
+}
+.btn-primary:hover { background: #252550; }
+
+.btn-accent {
+  background: var(--accent); color: var(--brand);
+  border-radius: 14px; padding: 13px 20px;
+  font-size: 14px; width: 100%;
+}
+.btn-accent:hover { background: var(--accent2); }
+
+.btn-outline {
+  background: transparent; color: var(--brand);
+  border: 1.5px solid var(--brand);
+  border-radius: 14px; padding: 11px 20px;
+  font-size: 14px;
+}
+.btn-outline:hover { background: rgba(26,26,46,0.05); }
+
+.chip {
+  display: inline-flex; align-items: center;
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; border: none;
+}
+.chip.active { background: var(--brand); color: white; }
+.chip.inactive { background: white; color: var(--text); border: 1px solid var(--border); }
+.chip.inactive:hover { border-color: var(--brand); }
+
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); color: var(--brand);
+  font-size: 10px; font-weight: 700;
+  position: absolute; top: -4px; right: -4px;
+}
+
+.qty-control {
+  display: flex; align-items: center; gap: 0;
+  background: var(--soft); border-radius: 10px; overflow: hidden;
+}
+.qty-btn {
+  width: 30px; height: 30px; border: none; background: transparent;
+  cursor: pointer; font-size: 16px; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 400;
+}
+.qty-btn:hover { background: rgba(26,26,46,0.06); }
+.qty-val { font-size: 13px; font-weight: 600; padding: 0 8px; color: var(--text); }
+
+.tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.tag-sale { background: #FFF0E0; color: #C47A00; }
+.tag-new { background: #E8F5E8; color: #2D7A3A; }
+.tag-popular { background: #EDE8FF; color: #5A3CC7; }
+
+.rating { display: flex; align-items: center; gap: 4px; }
+.stars { color: var(--accent); font-size: 12px; }
+.rating-count { font-size: 11px; color: var(--muted); }
+
+.divider { height: 1px; background: var(--border); margin: 0; }
+.divider-v { width: 1px; background: var(--border); align-self: stretch; }
+
+.input-field {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--text); background: var(--card-bg);
+  outline: none; transition: border-color 0.15s;
+}
+.input-field:focus { border-color: var(--brand); }
+
+.progress-step {
+  display: flex; align-items: center; gap: 6px;
+}
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+}
+.step-dot.done { background: var(--success); color: white; }
+.step-dot.active { background: var(--brand); color: white; }
+.step-dot.idle { background: var(--soft); color: var(--muted); border: 1.5px solid var(--border); }
+.step-line { flex: 1; height: 2px; border-radius: 1px; }
+.step-line.done { background: var(--success); }
+.step-line.idle { background: var(--border); }
+
+.screens-row {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.5rem 1rem;
+  scrollbar-width: none;
+  justify-content: flex-start;
+  width: 100%;
+}
+.screens-row::-webkit-scrollbar { display: none; }
+
+.phone-wrap { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.phone-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: center; }
+</style>
+
+<h2 class="sr-only">E-commerce mobile app UI with five screens: Home, Product Listing, Product Detail, Cart, and Checkout.</h2>
+
+<div class="wrapper">
+
+<div class="section-label">E-commerce Mobile App · Design System</div>
+
+<div class="screens-row">
+
+<!-- SCREEN 1: HOME -->
+<div class="phone-wrap">
+<div class="phone-label">Home</div>
+<div class="phone-frame">
+  <div class="screen">
+    <div class="status-bar"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content" style="padding-bottom: 80px;">
+      <!-- Header -->
+      <div style="background: var(--brand); padding: 16px 18px 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 500;">Good morning 👋</div>
+            <div style="font-size: 16px; color: white; font-weight: 600; font-family: 'Playfair Display', serif;">Amara</div>
+          </div>
+          <div style="position: relative; cursor: pointer;">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M6 8h12M6 12h12M6 16h12" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <!-- Search bar -->
+        <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><path d="M17 17l3 3" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/></svg>
+          <span style="font-size: 13px; color: rgba(255,255,255,0.55);">Search products…</span>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div style="margin: -8px 16px 0; background: linear-gradient(135deg, #E8B86D 0%, #C9A55A 100%); border-radius: 18px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 4px 16px rgba(232,184,109,0.35);">
+        <div>
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: rgba(26,26,46,0.65); text-transform: uppercase;">Limited offer</div>
+          <div style="font-size: 18px; font-weight: 700; color: var(--brand); font-family: 'Playfair Display', serif; line-height: 1.2;">Summer Sale<br>Up to 40% off</div>
+          <div style="margin-top: 10px; background: var(--brand); color: white; padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 600; display: inline-block;">Shop Now →</div>
+        </div>
+        <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px;">👗</div>
+      </div>
+
+      <!-- Categories -->
+      <div style="padding: 18px 18px 8px;">
+        <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Categories</div>
+        <div style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px;">
+          <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: #EDE8FF; display: flex; align-items: center; justify-content: center; font-size: 22px;">👔</div>
+            <span style="font-size: 10px; color: var(--text); font-weight: 500;">Men</span>
+          </div>
+          <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: #FFE8EE; display: flex; align-items: center; justify-content: center; font-size: 22px;">👗</div>
+            <span style="font-size: 10px; color: var(--text); font-weight: 500;">Women</span>
+          </div>
+          <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: #E8F5E8; display: flex; align-items: center; justify-content: center; font-size: 22px;">👟</div>
+            <span style="font-size: 10px; color: var(--text); font-weight: 500;">Shoes</span>
+          </div>
+          <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: #FFF3E0; display: flex; align-items: center; justify-content: center; font-size: 22px;">💍</div>
+            <span style="font-size: 10px; color: var(--text); font-weight: 500;">Jewelry</span>
+          </div>
+          <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: #E8F0FE; display: flex; align-items: center; justify-content: center; font-size: 22px;">🎒</div>
+            <span style="font-size: 10px; color: var(--text); font-weight: 500;">Bags</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Products -->
+      <div style="padding: 8px 18px 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="font-size: 14px; font-weight: 600; color: var(--text);">Featured</div>
+          <div style="font-size: 12px; color: var(--accent2); font-weight: 500; cursor: pointer;">See all →</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div style="background: var(--soft); border-radius: 16px; overflow: hidden; cursor: pointer;">
+            <div style="height: 110px; background: linear-gradient(135deg, #C8B8E8, #A090D0); display: flex; align-items: center; justify-content: center; font-size: 42px; position: relative;">
+              👘
+              <div style="position: absolute; top: 8px; left: 8px;"><span class="tag tag-new">New</span></div>
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Silk Wrap Dress</div>
+              <div style="font-size: 11px; color: var(--muted);">Women · XS–XL</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--brand);">$89</span>
+                <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="background: var(--soft); border-radius: 16px; overflow: hidden; cursor: pointer;">
+            <div style="height: 110px; background: linear-gradient(135deg, #B8D8E8, #90C0D0); display: flex; align-items: center; justify-content: center; font-size: 42px; position: relative;">
+              👟
+              <div style="position: absolute; top: 8px; left: 8px;"><span class="tag tag-sale">−20%</span></div>
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Air Runner Pro</div>
+              <div style="font-size: 11px; color: var(--muted);">Unisex · US 5–12</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+                <div>
+                  <span style="font-size: 13px; font-weight: 700; color: var(--brand);">$64</span>
+                  <span style="font-size: 10px; color: var(--muted); text-decoration: line-through; margin-left: 4px;">$79</span>
+                </div>
+                <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending -->
+      <div style="padding: 0 18px 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="font-size: 14px; font-weight: 600; color: var(--text);">Trending Now</div>
+          <div style="font-size: 12px; color: var(--accent2); font-weight: 500; cursor: pointer;">See all →</div>
+        </div>
+        <div style="display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;">
+          <div style="flex-shrink: 0; width: 130px; background: var(--soft); border-radius: 14px; overflow: hidden; cursor: pointer;">
+            <div style="height: 90px; background: linear-gradient(135deg, #E8D8B8, #D0C090); display: flex; align-items: center; justify-content: center; font-size: 36px;">💍</div>
+            <div style="padding: 8px 10px;">
+              <div style="font-size: 11px; font-weight: 600; color: var(--text);">Gold Bangle</div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--brand); margin-top: 2px;">$145</div>
+            </div>
+          </div>
+          <div style="flex-shrink: 0; width: 130px; background: var(--soft); border-radius: 14px; overflow: hidden; cursor: pointer;">
+            <div style="height: 90px; background: linear-gradient(135deg, #D8E8D8, #90C090); display: flex; align-items: center; justify-content: center; font-size: 36px;">🎒</div>
+            <div style="padding: 8px 10px;">
+              <div style="font-size: 11px; font-weight: 600; color: var(--text);">Canvas Tote</div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--brand); margin-top: 2px;">$48</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="nav-bar">
+      <div class="nav-item active">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v10h5v-5h4v5h5V10" stroke="#C9A55A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="color: var(--accent2);">Home</span>
+      </div>
+      <div class="nav-item">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#8B8680" stroke-width="1.8"/><path d="M17 17l3 3" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Search</span>
+      </div>
+      <div class="nav-item" style="position: relative;">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="badge">2</div>
+        <span>Cart</span>
+      </div>
+      <div class="nav-item">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="#8B8680" stroke-width="1.8"/></svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SCREEN 2: PRODUCT LISTING -->
+<div class="phone-wrap">
+<div class="phone-label">Product Listing</div>
+<div class="phone-frame">
+  <div class="screen">
+    <div class="status-bar"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content" style="padding-bottom: 80px;">
+      <!-- Header -->
+      <div style="padding: 14px 18px 10px; background: white; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: var(--soft); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke="var(--text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: var(--text); font-family: 'Playfair Display', serif;">Women's Fashion</div>
+            <div style="font-size: 11px; color: var(--muted);">128 items found</div>
+          </div>
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: var(--soft); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2" stroke="var(--text)" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <!-- Chips -->
+        <div style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;">
+          <button class="chip active">All</button>
+          <button class="chip inactive">Dresses</button>
+          <button class="chip inactive">Tops</button>
+          <button class="chip inactive">Bottoms</button>
+          <button class="chip inactive">Outerwear</button>
+        </div>
+      </div>
+
+      <!-- Sort/Filter row -->
+      <div style="padding: 10px 18px; display: flex; align-items: center; gap: 8px; background: white; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 5px; background: var(--soft); border-radius: 8px; padding: 6px 10px; cursor: pointer;">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2" stroke="var(--text)" stroke-width="2" stroke-linecap="round"/></svg>
+          <span style="font-size: 11px; font-weight: 500;">Filter</span>
+        </div>
+        <div style="font-size: 11px; color: var(--muted); flex: 1; text-align: center;">Sort: <span style="color: var(--text); font-weight: 500;">Popular</span></div>
+        <div style="display: flex; gap: 4px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="white" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="white" stroke-width="2"/></svg>
+          </div>
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: var(--soft); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="var(--text)" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div style="padding: 12px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <!-- Product 1 -->
+        <div style="background: white; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="height: 130px; background: linear-gradient(145deg, #C8B8E8, #9890C8); display: flex; align-items: center; justify-content: center; font-size: 46px; position: relative;">
+            👘
+            <div style="position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="#D84040" stroke-width="2" fill="none"/></svg>
+            </div>
+          </div>
+          <div style="padding: 10px;">
+            <div style="font-size: 11px; color: var(--muted);">Zara Collection</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--text); margin: 2px 0;">Lavender Midi Dress</div>
+            <div class="rating" style="margin: 4px 0;">
+              <span class="stars">★★★★★</span>
+              <span class="rating-count">(4.9)</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand);">$112</span>
+              <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center;">
+                <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Product 2 -->
+        <div style="background: white; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="height: 130px; background: linear-gradient(145deg, #F8D8C8, #E8A898); display: flex; align-items: center; justify-content: center; font-size: 46px; position: relative;">
+            👚
+            <div style="position: absolute; top: 8px; left: 8px;"><span class="tag tag-sale">−30%</span></div>
+            <div style="position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="#ccc" stroke-width="2" fill="none"/></svg>
+            </div>
+          </div>
+          <div style="padding: 10px;">
+            <div style="font-size: 11px; color: var(--muted);">H&M Studio</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--text); margin: 2px 0;">Linen Blouse</div>
+            <div class="rating" style="margin: 4px 0;">
+              <span class="stars">★★★★</span><span style="color: #ccc; font-size: 12px;">★</span>
+              <span class="rating-count">(4.2)</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <span style="font-size: 13px; font-weight: 700; color: var(--brand);">$42</span>
+                <span style="font-size: 10px; color: var(--muted); text-decoration: line-through; margin-left: 4px;">$59</span>
+              </div>
+              <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center;">
+                <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Product 3 -->
+        <div style="background: white; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="height: 130px; background: linear-gradient(145deg, #D8E8D8, #A8C8A8); display: flex; align-items: center; justify-content: center; font-size: 46px; position: relative;">
+            🧥
+            <div style="position: absolute; top: 8px; left: 8px;"><span class="tag tag-new">New</span></div>
+          </div>
+          <div style="padding: 10px;">
+            <div style="font-size: 11px; color: var(--muted);">Mango</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--text); margin: 2px 0;">Sage Blazer</div>
+            <div class="rating" style="margin: 4px 0;">
+              <span class="stars">★★★★★</span>
+              <span class="rating-count">(4.7)</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand);">$138</span>
+              <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center;">
+                <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Product 4 -->
+        <div style="background: white; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="height: 130px; background: linear-gradient(145deg, #F0E8D8, #D8C8A8); display: flex; align-items: center; justify-content: center; font-size: 46px; position: relative;">
+            👖
+            <div style="position: absolute; top: 8px; left: 8px;"><span class="tag tag-popular">Popular</span></div>
+          </div>
+          <div style="padding: 10px;">
+            <div style="font-size: 11px; color: var(--muted);">ASOS Design</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--text); margin: 2px 0;">High-Rise Jeans</div>
+            <div class="rating" style="margin: 4px 0;">
+              <span class="stars">★★★★</span><span style="color: #ccc; font-size: 12px;">★</span>
+              <span class="rating-count">(4.5)</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand);">$76</span>
+              <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center;">
+                <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v10h5v-5h4v5h5V10" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item active">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#C9A55A" stroke-width="1.8"/><path d="M17 17l3 3" stroke="#C9A55A" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span style="color: var(--accent2);">Search</span>
+      </div>
+      <div class="nav-item" style="position: relative;">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#8B8680" stroke-width="1.8"/><path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <div class="badge">2</div>
+        <span>Cart</span>
+      </div>
+      <div class="nav-item">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="#8B8680" stroke-width="1.8"/></svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SCREEN 3: PRODUCT DETAIL -->
+<div class="phone-wrap">
+<div class="phone-label">Product Detail</div>
+<div class="phone-frame">
+  <div class="screen">
+    <div class="status-bar"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content" style="padding-bottom: 80px;">
+      <!-- Hero Image -->
+      <div style="height: 240px; background: linear-gradient(145deg, #C8B8E8, #9890C8); display: flex; align-items: center; justify-content: center; font-size: 90px; position: relative;">
+        👘
+        <div style="position: absolute; top: 14px; left: 14px; width: 34px; height: 34px; background: rgba(255,255,255,0.9); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke="var(--text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; background: rgba(255,255,255,0.9); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="#D84040" stroke-width="2" fill="#FFE8E8"/></svg>
+        </div>
+        <!-- Thumbnail row -->
+        <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.9); border: 2px solid var(--brand); display: flex; align-items: center; justify-content: center; font-size: 16px;">👘</div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-size: 16px;">👘</div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-size: 16px;">👘</div>
+        </div>
+      </div>
+
+      <div style="padding: 16px 18px;">
+        <!-- Name & Price -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px;">
+          <div>
+            <div style="font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 2px;">Zara Collection</div>
+            <div style="font-size: 17px; font-weight: 700; color: var(--text); font-family: 'Playfair Display', serif; line-height: 1.2;">Lavender Midi<br>Wrap Dress</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 18px; font-weight: 700; color: var(--brand);">$112</div>
+            <div style="font-size: 11px; color: var(--success); font-weight: 500;">In Stock</div>
+          </div>
+        </div>
+
+        <!-- Rating -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+          <div class="rating">
+            <span class="stars" style="font-size: 14px;">★★★★★</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 600; color: var(--text);">4.9</span>
+          <span style="font-size: 12px; color: var(--muted);">· 284 reviews</span>
+          <div style="margin-left: auto; font-size: 12px; color: var(--accent2); font-weight: 500; cursor: pointer;">See all</div>
+        </div>
+
+        <div class="divider" style="margin-bottom: 14px;"></div>
+
+        <!-- Size -->
+        <div style="margin-bottom: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 13px; font-weight: 600; color: var(--text);">Size</span>
+            <span style="font-size: 11px; color: var(--accent2); cursor: pointer;">Size guide →</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer;">XS</div>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--brand); border: 1.5px solid var(--brand); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; cursor: pointer;">S</div>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--text); cursor: pointer;">M</div>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--text); cursor: pointer;">L</div>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; text-decoration: line-through;">XL</div>
+          </div>
+        </div>
+
+        <!-- Color -->
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Color · <span style="font-weight: 400; color: var(--muted);">Lavender</span></div>
+          <div style="display: flex; gap: 8px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #C8B8E8; border: 2px solid var(--brand);"></div>
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #F8D8C8;"></div>
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #D8E8D8;"></div>
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #1A1A2E;"></div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Description</div>
+          <div style="font-size: 12px; color: var(--subtext); line-height: 1.6;">A flowy midi wrap dress in soft lavender with a V-neck and adjustable tie waist. Made from 100% sustainable viscose.</div>
+        </div>
+
+        <!-- Add to Cart -->
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div class="qty-control">
+            <button class="qty-btn">−</button>
+            <span class="qty-val">1</span>
+            <button class="qty-btn">+</button>
+          </div>
+          <button class="btn btn-primary" style="flex: 1;">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v10h5v-5h4v5h5V10" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Home</span></div>
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#8B8680" stroke-width="1.8"/><path d="M17 17l3 3" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round"/></svg><span>Search</span></div>
+      <div class="nav-item" style="position: relative;"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#C9A55A" stroke-width="1.8"/><path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#C9A55A" stroke-width="1.8" stroke-linecap="round"/></svg><div class="badge">2</div><span style="color:var(--accent2)">Cart</span></div>
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#8B8680" stroke-width="1.8"/><circle cx="12" cy="7" r="4" stroke="#8B8680" stroke-width="1.8"/></svg><span>Profile</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SCREEN 4: CART -->
+<div class="phone-wrap">
+<div class="phone-label">Cart</div>
+<div class="phone-frame">
+  <div class="screen">
+    <div class="status-bar"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content" style="padding-bottom: 80px;">
+      <div style="padding: 16px 18px 10px; background: white;">
+        <div style="font-size: 17px; font-weight: 700; color: var(--text); font-family: 'Playfair Display', serif;">My Cart</div>
+        <div style="font-size: 12px; color: var(--muted);">2 items</div>
+      </div>
+
+      <div style="padding: 12px 18px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Cart Item 1 -->
+        <div style="background: white; border-radius: 16px; padding: 14px; display: flex; gap: 12px; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="width: 72px; height: 72px; border-radius: 12px; background: linear-gradient(135deg, #C8B8E8, #9890C8); display: flex; align-items: center; justify-content: center; font-size: 30px; flex-shrink: 0;">👘</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text);">Lavender Midi Dress</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">Size: S · Lavender</div>
+              </div>
+              <div style="cursor: pointer; padding: 2px; color: var(--muted);">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#8B8680" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+              <div class="qty-control">
+                <button class="qty-btn" style="font-size: 13px;">−</button>
+                <span class="qty-val" style="font-size: 12px;">1</span>
+                <button class="qty-btn" style="font-size: 13px;">+</button>
+              </div>
+              <span style="font-size: 14px; font-weight: 700; color: var(--brand);">$112.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart Item 2 -->
+        <div style="background: white; border-radius: 16px; padding: 14px; display: flex; gap: 12px; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="width: 72px; height: 72px; border-radius: 12px; background: linear-gradient(135deg, #B8D8E8, #90C0D0); display: flex; align-items: center; justify-content: center; font-size: 30px; flex-shrink: 0;">👟</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text);">Air Runner Pro</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">Size: US 7 · White</div>
+              </div>
+              <div style="cursor: pointer; padding: 2px;">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#8B8680" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+              <div class="qty-control">
+                <button class="qty-btn" style="font-size: 13px;">−</button>
+                <span class="qty-val" style="font-size: 12px;">1</span>
+                <button class="qty-btn" style="font-size: 13px;">+</button>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 14px; font-weight: 700; color: var(--brand);">$64.00</div>
+                <div style="font-size: 10px; color: var(--muted); text-decoration: line-through;">$79.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo Code -->
+        <div style="background: white; border-radius: 14px; padding: 12px 14px; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="display: flex; gap: 8px;">
+            <input class="input-field" placeholder="Promo code" style="flex:1; padding: 10px 12px; font-size: 12px; border-radius: 10px;"/>
+            <button class="btn btn-outline" style="width: auto; padding: 10px 16px; font-size: 12px; border-radius: 10px; white-space: nowrap;">Apply</button>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div style="background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Order Summary</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--subtext);">
+              <span>Subtotal (2 items)</span><span style="font-weight: 500; color: var(--text);">$176.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--subtext);">
+              <span>Shipping</span><span style="font-weight: 500; color: var(--success);">Free</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--subtext);">
+              <span>Tax (8%)</span><span style="font-weight: 500; color: var(--text);">$14.08</span>
+            </div>
+            <div class="divider" style="margin: 4px 0;"></div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--brand);">
+              <span>Total</span><span>$190.08</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-accent" style="font-size: 14px; padding: 14px; border-radius: 14px;">Proceed to Checkout →</button>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v10h5v-5h4v5h5V10" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Home</span></div>
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#8B8680" stroke-width="1.8"/><path d="M17 17l3 3" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round"/></svg><span>Search</span></div>
+      <div class="nav-item active" style="position: relative;"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#C9A55A" stroke-width="1.8"/><path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#C9A55A" stroke-width="1.8" stroke-linecap="round"/></svg><div class="badge">2</div><span style="color:var(--accent2)">Cart</span></div>
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#8B8680" stroke-width="1.8"/><circle cx="12" cy="7" r="4" stroke="#8B8680" stroke-width="1.8"/></svg><span>Profile</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SCREEN 5: CHECKOUT -->
+<div class="phone-wrap">
+<div class="phone-label">Checkout</div>
+<div class="phone-frame">
+  <div class="screen">
+    <div class="status-bar"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content" style="padding-bottom: 80px;">
+      <div style="padding: 14px 18px 12px; background: white; border-bottom: 1px solid var(--border);">
+        <div style="font-size: 17px; font-weight: 700; color: var(--text); font-family: 'Playfair Display', serif; margin-bottom: 12px;">Checkout</div>
+        <!-- Progress -->
+        <div style="display: flex; align-items: center; gap: 0;">
+          <div class="progress-step">
+            <div class="step-dot done">✓</div>
+          </div>
+          <div class="step-line done" style="flex: 1;"></div>
+          <div class="progress-step">
+            <div class="step-dot active">2</div>
+          </div>
+          <div class="step-line idle" style="flex: 1;"></div>
+          <div class="progress-step">
+            <div class="step-dot idle">3</div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 6px;">
+          <span style="font-size: 10px; color: var(--success); font-weight: 500;">Address</span>
+          <span style="font-size: 10px; color: var(--brand); font-weight: 600;">Payment</span>
+          <span style="font-size: 10px; color: var(--muted);">Review</span>
+        </div>
+      </div>
+
+      <div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 12px;">
+
+        <!-- Delivery Address summary -->
+        <div style="background: #F0F8F4; border-radius: 14px; padding: 12px 14px; border: 1.5px solid #B0D8C0;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-12a8 8 0 1116 0c0 6.5-8 12-8 12z" stroke="#3B9B6E" stroke-width="2"/><circle cx="12" cy="9" r="3" stroke="#3B9B6E" stroke-width="2"/></svg>
+              <span style="font-size: 12px; font-weight: 600; color: #3B9B6E;">Delivery Address</span>
+            </div>
+            <span style="font-size: 11px; color: var(--accent2); font-weight: 500; cursor: pointer;">Change</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text); font-weight: 500;">Amara Johnson</div>
+          <div style="font-size: 11px; color: var(--subtext);">42 Blossom Lane, Apt 3B · New York, NY 10001</div>
+        </div>
+
+        <!-- Payment Method -->
+        <div style="background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Payment Method</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--brand); background: rgba(26,26,46,0.03); cursor: pointer;">
+              <div style="width: 32px; height: 22px; background: var(--brand); border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="10" fill="none" viewBox="0 0 24 14"><rect width="24" height="14" rx="3" fill="#1A1A2E"/><rect y="3" width="24" height="3" fill="#E8B86D"/><rect x="2" y="9" width="6" height="2" rx="1" fill="white" fill-opacity="0.7"/></svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-size: 12px; font-weight: 600; color: var(--text);">•••• •••• •••• 4521</div>
+                <div style="font-size: 10px; color: var(--muted);">Expires 04/27</div>
+              </div>
+              <div style="width: 16px; height: 16px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center;">
+                <svg width="8" height="6" fill="none" viewBox="0 0 10 7"><path d="M1 1l4 4 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" display="none"/><circle cx="5" cy="3.5" r="2" fill="white"/></svg>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer;">
+              <div style="width: 32px; height: 22px; background: #F5F5F5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 14px;">💳</div>
+              <div style="font-size: 12px; font-weight: 500; color: var(--text);">Add new card</div>
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" style="margin-left: auto;"><path d="M12 4v16M4 12h16" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer;">
+              <div style="width: 32px; height: 22px; background: #007AFF; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 700;">Pay</div>
+              <div style="font-size: 12px; font-weight: 500; color: var(--text);">Apple Pay</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary mini -->
+        <div style="background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 8px rgba(26,26,46,0.06);">
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">Order Total</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--subtext);">
+              <span>2 items</span><span>$176.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--subtext);">
+              <span>Shipping</span><span style="color: var(--success);">Free</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--subtext);">
+              <span>Tax</span><span>$14.08</span>
+            </div>
+            <div class="divider" style="margin: 4px 0;"></div>
+            <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--brand);">
+              <span>Total</span><span>$190.08</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="font-size: 14px; padding: 15px; border-radius: 14px; gap: 8px;">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Place Order · $190.08
+        </button>
+        <div style="text-align: center; font-size: 11px; color: var(--muted);">🔒 SSL encrypted · 30-day returns</div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v10h5v-5h4v5h5V10" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Home</span></div>
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#8B8680" stroke-width="1.8"/><path d="M17 17l3 3" stroke="#8B8680" stroke-width="1.8" stroke-linecap="round"/></svg><span>Search</span></div>
+      <div class="nav-item" style="position: relative;"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#C9A55A" stroke-width="1.8"/><path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#C9A55A" stroke-width="1.8" stroke-linecap="round"/></svg><div class="badge">2</div><span style="color:var(--accent2)">Cart</span></div>
+      <div class="nav-item"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#8B8680" stroke-width="1.8"/><circle cx="12" cy="7" r="4" stroke="#8B8680" stroke-width="1.8"/></svg><span>Profile</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end screens-row -->
+
+<!-- Design System Legend -->
+<div style="width: 100%; max-width: 700px; padding: 0 0.5rem;">
+<div style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; text-align: center;">Design System</div>
+<div style="background: white; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 2px 12px rgba(26,26,46,0.07);">
+
+  <!-- Colors -->
+  <div>
+    <div style="font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">COLOR PALETTE</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #1A1A2E;"></div>
+        <span style="font-size: 9px; color: var(--muted);">Brand</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #E8B86D;"></div>
+        <span style="font-size: 9px; color: var(--muted);">Accent</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #F7F4EF; border: 1px solid #eee;"></div>
+        <span style="font-size: 9px; color: var(--muted);">Surface</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #3B9B6E;"></div>
+        <span style="font-size: 9px; color: var(--muted);">Success</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #D84040;"></div>
+        <span style="font-size: 9px; color: var(--muted);">Danger</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #6B6560;"></div>
+        <span style="font-size: 9px; color: var(--muted);">Muted</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Typography -->
+  <div>
+    <div style="font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">TYPOGRAPHY</div>
+    <div style="font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--text);">Playfair Display — Headings</div>
+    <div style="font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--subtext); margin-top: 3px;">DM Sans — Body, UI, Labels</div>
+  </div>
+
+  <!-- Buttons -->
+  <div>
+    <div style="font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">BUTTONS & TAGS</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <button class="btn btn-primary" style="width: auto; padding: 9px 18px; font-size: 12px;">Primary</button>
+      <button class="btn btn-accent" style="width: auto; padding: 9px 18px; font-size: 12px;">Accent</button>
+      <button class="btn btn-outline" style="padding: 8px 16px; font-size: 12px;">Outline</button>
+      <span class="tag tag-sale">−30%</span>
+      <span class="tag tag-new">New</span>
+      <span class="tag tag-popular">Popular</span>
+    </div>
+  </div>
+
+</div>
+</div>
+SHARAT S UNNITHAN
+</div>
