@@ -46,7 +46,7 @@ A modern and user-friendly mobile UI design for an e-commerce application, focus
 
 ## 🛍️ Product Listing
 
-![Product Listing](screenshots/Productlisting.png)
+![Product Listing](screenshots/ProductListing.png)
 
 ---
 
